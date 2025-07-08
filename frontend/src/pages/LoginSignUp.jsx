@@ -5,35 +5,42 @@ import axios from 'axios';
 
 const LoginSignUp = () => {
   const [isSignIn, setIsSignIn] = useState(true);
-  const { login, token } = useAuth();
+  const { login, token, user } = useAuth();
   const navigate = useNavigate();
 
-  // Form states
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    if (token) {
+useEffect(() => {
+  if (token && user) {
+    if (user.role === 'admin') {
+      navigate('/admin');
+    } else {
       navigate('/');
     }
-  }, [token, navigate]);
+  }
+}, [token, user, navigate]);
 
   const handleLogin = async () => {
-    try {
-      const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/login`, {
-        email: email.trim(),
-        password: password.trim(),
-      });
-      const { user, token } = res.data;
-      login(user, token);
-      setEmail('');
-      setPassword('');
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/login`, {
+      email: email.trim(),
+      password: password.trim(),
+    });
+    const { user, token } = res.data;
+    login(user, token);
+    setEmail('');
+    setPassword('');
+    if (user.role === 'admin') {
+      navigate('/admin');
+    } else {
       navigate('/');
-    } catch (err) {
-      alert(err?.response?.data?.message || 'Login failed');
     }
-  };
+  } catch (err) {
+    alert(err?.response?.data?.message || 'Login failed');
+  }
+};
 
   const handleRegister = async () => {
     try {

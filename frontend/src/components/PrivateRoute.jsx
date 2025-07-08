@@ -1,18 +1,17 @@
-import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children, allowedRoles }) => {
-  const { token, user } = useAuth();
+const PrivateRoute = ({ children, adminOnly = false }) => {
+  const { user, token } = useAuth();
 
-  // If not logged in
-  if (!token) return <Navigate to="/login" replace />;
-
-  // If role check is required and user doesn't have access
-  if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    return <Navigate to="/" replace />;
+  if (!token) {
+    return <Navigate to="/login" />;
   }
 
-  // Otherwise, allow access
+  if (adminOnly && user?.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
+
   return children;
 };
 
