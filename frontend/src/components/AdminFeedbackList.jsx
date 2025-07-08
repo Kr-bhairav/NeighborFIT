@@ -1,36 +1,42 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 const AdminFeedbackList = () => {
   const [feedbacks, setFeedbacks] = useState([]);
+  const [error, setError] = useState("");
+  const { token } = useAuth();
 
   useEffect(() => {
     const fetchFeedback = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_APP_API_URL}/feedback`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}/feedback`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setFeedbacks(res.data);
       } catch (err) {
-        console.error('Failed to fetch feedback');
+        setError("Failed to fetch feedbacks.");
       }
     };
     fetchFeedback();
-  }, []);
+  }, [token]);
+
+  if (error) return <div className="text-red-600">{error}</div>;
+  if (!feedbacks.length) return <div>No feedback yet.</div>;
 
   return (
-    <div className="p-4 bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4">User Feedback</h2>
-      {feedbacks.length === 0 ? (
-        <p>No feedback yet.</p>
-      ) : (
-        feedbacks.map((fb) => (
-          <div key={fb._id} className="mb-3 border-b pb-2">
-            <p className="font-semibold">{fb.user?.username || 'Unknown User'}</p>
-            <p className="text-sm text-gray-600">{new Date(fb.createdAt).toLocaleString()}</p>
-            <p>{fb.message}</p>
-          </div>
-        ))
-      )}
-    </div>
+    <ul>
+      {feedbacks.map((fb) => (
+        <li key={fb._id}>
+          <strong>{fb.user?.username || "User"}:</strong> {fb.message}
+        </li>
+      ))}
+    </ul>
   );
 };
 

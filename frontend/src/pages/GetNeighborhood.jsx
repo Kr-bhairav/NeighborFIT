@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Wallet,
@@ -48,6 +48,7 @@ const GetNeighborhood = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [reviews, setReviews] = useState({});
 
   const handlePrefChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +78,25 @@ const GetNeighborhood = () => {
     }
     setLoading(false);
   };
+
+  // Fetch reviews for each match
+  const fetchReviews = async (neighborhoodId) => {
+    try {
+      const res = await axios.get(`${API_URL}/review/${neighborhoodId}`);
+      setReviews(prev => ({ ...prev, [neighborhoodId]: res.data }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (result && result.matches) {
+      result.matches.forEach((match) => {
+        fetchReviews(match._id);
+      });
+    }
+    // eslint-disable-next-line
+  }, [result]);
 
   return (
     <section className="min-h-screen pt-28 px-4 bg-gradient-to-r from-white via-purple-50 to-white flex flex-col items-center">
@@ -166,39 +186,56 @@ const GetNeighborhood = () => {
         </form>
 
         {result && result.matches && result.matches.length > 0 && (
-  <div className="mt-10">
-    <h3 className="text-2xl font-extrabold text-purple-700 mb-6 text-center">
-      Matches:
-    </h3>
+          <div className="mt-10">
+            <h3 className="text-2xl font-extrabold text-purple-700 mb-6 text-center">
+              Matches:
+            </h3>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {result.matches.map((match) => (
-        <div
-          key={match._id}
-          className="bg-white rounded-xl shadow-md p-6"
-        >
-          <div className="font-bold text-xl mb-3">{match.name}</div>
-          <div className="space-y-1 text-gray-700 text-sm">
-            <div>Affordability: {match.affordability}</div>
-            <div>Safety: {match.safety}</div>
-            <div>Nightlife: {match.nightlife}</div>
-            <div>Internet: {match.internet}</div>
-            <div>Greenery: {match.greenery}</div>
-            <div>Education: {match.education}</div>
-            <div className="mt-2">{match.description}</div>
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {result.matches.map((match) => (
+                <div
+                  key={match._id}
+                  className="bg-white rounded-xl shadow-md p-6"
+                >
+                  <div className="font-bold text-xl mb-3">{match.name}</div>
+                  <div className="space-y-1 text-gray-700 text-sm">
+                    <div>Affordability: {match.affordability}</div>
+                    <div>Safety: {match.safety}</div>
+                    <div>Nightlife: {match.nightlife}</div>
+                    <div>Internet: {match.internet}</div>
+                    <div>Greenery: {match.greenery}</div>
+                    <div>Education: {match.education}</div>
+                    <div className="mt-2">{match.description}</div>
+                  </div>
 
-          {user && (
-            <div className="mt-4">
-              <SubmitReview neighborhoodId={match._id} />
+                  <div className="mt-4">
+                    <h4 className="font-semibold mb-2">Reviews:</h4>
+                    {reviews[match._id]?.length ? (
+                      <ul className="text-sm text-gray-700 space-y-1">
+                        {reviews[match._id].map((review) => (
+  <li key={review._id}>
+    <span className="font-semibold">{review.user?.username || "User"}:</span> {review.comment}
+  </li>
+))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-400 text-sm">No reviews yet.</p>
+                    )}
+                  </div>
+
+                  {user && (
+                    <div className="mt-4">
+                      <SubmitReview
+                        neighborhoodId={match._id}
+                        onReviewAdded={() => fetchReviews(match._id)}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
+          </div>
+        )}
       </div>
     </section>
   );

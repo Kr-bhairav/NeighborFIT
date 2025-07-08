@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const SubmitFeedback = () => {
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState('');
+  const { token } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_APP_API_URL}/feedback`, { message });
-      setSubmitted(res.data.message);
+      await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}/feedback`,
+        { message },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSubmitted('Thank you for your feedback!');
       setMessage('');
     } catch (err) {
       setSubmitted('Failed to submit feedback.');

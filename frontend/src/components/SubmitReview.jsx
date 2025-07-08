@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-const SubmitReview = ({ neighborhoodId }) => {
+const SubmitReview = ({ neighborhoodId, onReviewAdded }) => {
   const { token } = useAuth();
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
@@ -21,6 +21,7 @@ const SubmitReview = ({ neighborhoodId }) => {
       );
       setMessage(res.data.message);
       setComment('');
+      if (onReviewAdded) onReviewAdded(); // <-- call this after successful submit
     } catch (err) {
       setMessage(err.response?.data?.message || 'Something went wrong.');
     }
@@ -47,7 +48,7 @@ const SubmitReview = ({ neighborhoodId }) => {
         >
           {[1, 2, 3, 4, 5].map((num) => (
             <option key={num} value={num}>
-              {num} ⭐
+              {num} 
             </option>
           ))}
         </select>
