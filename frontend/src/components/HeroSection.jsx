@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroImage from "../assets/hero.jpg"; 
 
 const HeroSection = () => {
@@ -12,12 +13,12 @@ const HeroSection = () => {
           <p className="mt-4 text-gray-600 text-lg">
             Discover your ideal neighborhood based on what really matters to you — safety, affordability, community, and more.
           </p>
-          <a
-            href="/get"
+          <Link
+            to="/get"
             className="inline-block mt-6 bg-purple-700 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-purple-800 transition"
           >
             Get Started
-          </a>
+          </Link>
         </div>
         <div className="flex justify-center">
           <img
