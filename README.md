@@ -1,7 +1,5 @@
 # NeighborFit
 
-<p align="center"><img src="https://socialify.git.ci/Di-Abhi/NeighborFit/image?custom_language=React&amp;font=Inter&amp;language=1&amp;name=1&amp;owner=1&amp;stargazers=1&amp;theme=Light" alt="project-image"></p>
-
 **NeighborFit** is a full-stack web application designed to help users find neighborhoods that match their lifestyle preferences. Through a user-friendly questionnaire, the platform provides tailored recommendations based on key factors such as affordability, safety, greenery, facilities, and commute needs.
 
 ---
@@ -103,7 +101,7 @@ npm install
 Create a `.env` file in the `frontend/` directory:
 
 ```env
-VITE_APP_API_URL=http://localhost:3000/api
+VITE_APP_API_URL=http://localhost:5000/api
 ```
 
 #### Run Frontend
@@ -127,6 +125,7 @@ npm run dev
 ## Contributors
 
 - [Abhishek Kumar](https://github.com/Di-Abhi)
+- [Bhairav kumar](https://github.com/Kr-bhairav)
 
 ---
 
