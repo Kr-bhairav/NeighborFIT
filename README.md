@@ -4,13 +4,6 @@
 
 ---
 
-## Live Demo
-
-- **Frontend**: [https://neighborfit-abhi.netlify.app/](https://neighborfit-abhi.netlify.app/)
-- **Backend**: [https://neighborfit-vamy.onrender.com](https://neighborfit-vamy.onrender.com)
-
----
-
 ## Tech Stack
 
 **Frontend**
